@@ -2,9 +2,9 @@ interface IScheduler {
   start(): void;
   stop(): void;
   addJob(
-    func: (jobId: number, ...args: unknown[]) => unknown,
-    startAt: Date,
-    args: unknown
+    func: (jobId: number, args: unknown) => unknown,
+    startAt: number,
+    args?: unknown
   ): number;
   removeJob(jobId: number): void;
 }
@@ -12,7 +12,7 @@ interface IScheduler {
 interface IJob {
   id: number;
   func: (jobId: number, args: unknown) => unknown;
-  startAt: Date;
+  startAt: number;
   args?: unknown;
 }
 type SetIntervalSchedulerConfig = {
@@ -31,7 +31,7 @@ export class SetIntervalScheduler implements IScheduler {
   public start(): void {
     this.intervalId = setInterval(() => {
       this.jobs.forEach(job => {
-        if (job.startAt <= new Date()) {
+        if (job.startAt <= +new Date()) {
           job.func(job.id, job.args || {});
           this.removeJob(job.id);
         }
@@ -43,7 +43,7 @@ export class SetIntervalScheduler implements IScheduler {
   }
   public addJob(
     func: (jobId: number, args?: any) => unknown,
-    startAt: Date,
+    startAt: number,
     args?: unknown
   ): number {
     const job: IJob = {
