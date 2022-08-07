@@ -15,9 +15,19 @@ interface IJob {
   startAt: Date;
   args?: unknown;
 }
-export class Scheduler implements IScheduler {
+type SetIntervalSchedulerConfig = {
+  interval: number;
+};
+export class SetIntervalScheduler implements IScheduler {
   private jobs: IJob[] = [];
   private intervalId: NodeJS.Timeout | undefined;
+  private interval = 1000;
+  constructor(config?: SetIntervalSchedulerConfig) {
+    if (!config) {
+      return;
+    }
+    this.interval = config.interval;
+  }
   public start(): void {
     this.intervalId = setInterval(() => {
       this.jobs.forEach(job => {
@@ -26,7 +36,7 @@ export class Scheduler implements IScheduler {
           this.removeJob(job.id);
         }
       });
-    }, 1000);
+    }, this.interval);
   }
   public stop(): void {
     clearInterval(this.intervalId);

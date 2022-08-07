@@ -1,13 +1,14 @@
 import {expect, test, jest} from '@jest/globals';
-import {Scheduler} from '../index';
+import {SetIntervalScheduler} from '../index';
 jest.useFakeTimers();
 
 test('add new job Scheduler', () => {
-  const scheduler = new Scheduler();
+  const scheduler = new SetIntervalScheduler();
   const mockJob = jest.fn(() => {
     console.log('Execued at', new Date());
     console.log('job 1');
   });
+  // Add new minutes to current time
   const startAt = new Date(+new Date() + 60000 * 2);
   console.log('Start At', startAt);
   scheduler.addJob(mockJob, startAt);
@@ -18,7 +19,7 @@ test('add new job Scheduler', () => {
 });
 
 test('pass args to job', () => {
-  const scheduler = new Scheduler();
+  const scheduler = new SetIntervalScheduler();
   const mockJob = jest.fn(
     (jobId: number, args: {arg1: string; arg2: number}) => {
       console.log('Execued at', new Date());
